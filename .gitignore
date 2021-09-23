@@ -31,3 +31,7 @@ override.tf.json
 
 #Intellij Directories
 .idea
+
+#Node Modules
+node_modules
+
