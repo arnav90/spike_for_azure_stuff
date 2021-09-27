@@ -1,5 +1,7 @@
 import * as resources from "@pulumi/azure-native/resources";
 import * as network from "@pulumi/azure-native/network";
+import * as operationalInsights from "@pulumi/azure-native/operationalinsights";
+import * as azure from "@pulumi/azure";
 import {tags} from "./tags";
 
 // Create an Azure Resource Group
@@ -49,4 +51,33 @@ const Vnet = new network.VirtualNetwork("regional-defence-force-training-network
     location: resourceGroup.location,
     resourceGroupName: resourceGroup.name,
     tags: tags,
-})
+});
+
+
+//Monitoring Setup for Azure Function Apps
+const LoW = new operationalInsights.Workspace("analytics-workspace-pulumi",{
+    location: resourceGroup.location,
+    provisioningState: undefined,
+    publicNetworkAccessForIngestion: undefined,
+    publicNetworkAccessForQuery: undefined,
+    resourceGroupName: resourceGroup.name,
+    retentionInDays: 30,
+    sku: {
+        name: "pergb2018"
+    },
+    tags: tags
+});
+
+const AppInsights = new azure.appinsights.Insights("app-insights-pulumi", {
+    location: resourceGroup.location,
+    resourceGroupName: resourceGroup.name,
+    retentionInDays: 30,
+    tags: tags,
+    workspaceId: LoW.id,
+    applicationType: "web"
+
+});
+
+
+export const appInsightsPulumiInstrumentationKey = AppInsights.instrumentationKey;
+export const pulumiAppId = AppInsights.appId;
