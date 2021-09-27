@@ -34,4 +34,4 @@ override.tf.json
 
 #Node Modules
 node_modules
-
+.vscode
