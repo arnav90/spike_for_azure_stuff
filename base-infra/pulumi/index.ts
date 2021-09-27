@@ -1,5 +1,6 @@
 import * as resources from "@pulumi/azure-native/resources";
 import * as network from "@pulumi/azure-native/network";
+import * as storage from "@pulumi/azure-native/storage";
 import * as operationalInsights from "@pulumi/azure-native/operationalinsights";
 import * as azure from "@pulumi/azure";
 import {tags} from "./tags";
@@ -75,9 +76,20 @@ const AppInsights = new azure.appinsights.Insights("app-insights-pulumi", {
     tags: tags,
     workspaceId: LoW.id,
     applicationType: "web"
-
 });
 
+//Storage Account for Azure Function App
+const StorageAccount = new storage.StorageAccount("pulumi-sa", {
+    kind: "StorageV2",
+    resourceGroupName: resourceGroup.name,
+    sku: {
+        name: "Standard_GRS"
+    },
+    location: resourceGroup.location,
+    tags: tags,
+    accountName: "pulumisa"
+
+});
 
 export const appInsightsPulumiInstrumentationKey = AppInsights.instrumentationKey;
 export const pulumiAppId = AppInsights.appId;
