@@ -3,6 +3,7 @@ import * as network from "@pulumi/azure-native/network";
 import * as storage from "@pulumi/azure-native/storage";
 import * as operationalInsights from "@pulumi/azure-native/operationalinsights";
 import * as azure from "@pulumi/azure";
+import * as azureNative from "@pulumi/azure-native";
 import {tags} from "./tags";
 
 // Create an Azure Resource Group
@@ -89,6 +90,19 @@ const StorageAccount = new storage.StorageAccount("pulumi-sa", {
     tags: tags,
     accountName: "pulumisa"
 
+});
+
+//Service Plan
+const appServicePlan = new azureNative.web.AppServicePlan("pulumi-app-plan",{
+    resourceGroupName: resourceGroup.name,
+    location: resourceGroup.location,
+    kind: "Linux",
+    reserved: true,
+    sku: {
+        tier: "Standard",
+        size: "S1",
+        name: "S1"
+    }
 });
 
 export const appInsightsPulumiInstrumentationKey = AppInsights.instrumentationKey;
